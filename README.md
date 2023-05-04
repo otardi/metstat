@@ -6,6 +6,21 @@ Une application "fullstack" utilisant *express.js* et *React* pour afficher des 
 
 Pour servir de démo ou de base à des exercices dans des cours de backend, frontend ou BD.
 
-# Comment?
+# Comment ça marche?
 
-TODO
+Le répertoire `backend` est un serveur *ExpressJS* qui se connecte sur une BD *MariaDB* locale. 
+
+Le répertoire `frontend` est une application *React* qui se connecte sur l'API du serveur *ExpressJS*. 
+
+Les données sont publiques et viennent d'[ici](https://www.donneesquebec.ca/recherche/dataset/vmtl-incidents-du-reseau-du-metro). Elles ont été transformées pour être utilisées dans *MariaBD*.
+
+# Dépendances
+
+## backend
++ npm
+    + mysql2 
+
+## frontend
++ npm
+    + bootstrap
+    + react-google-charts
