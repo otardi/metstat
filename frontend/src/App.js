@@ -1,6 +1,9 @@
 import './App.css';
 import { useState, useEffect } from "react";
 import { Chart } from "react-google-charts";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 
 const Topbar = () => {
   return (
@@ -34,7 +37,7 @@ function App() {
       </div>
       <div className="row m-2">
         <div className="col-12">
-          <Top10StationParMois />
+          <RechercheParDate />
         </div>
       </div>
       <div className="row m-2">
@@ -66,9 +69,9 @@ const Top5Stations = () =>  {
   }, []);
 
   return (
-    <div class="card flex-fill">
-      <div class="card-body">
-        <h3 class="card-title">Top 5 Stations</h3>
+    <div className="card flex-fill">
+      <div className="card-body">
+        <h3 className="card-title">Top 5 Stations</h3>
         <table className="table">
           <thead>
             <tr>
@@ -78,7 +81,7 @@ const Top5Stations = () =>  {
           </thead>
           <tbody>
             {listeTopStations.map((e) => (
-              <tr>
+              <tr key={e.nom}>
                 <td>{e.nom}</td>
                 <td>{e.nb}</td>
               </tr>
@@ -118,9 +121,9 @@ const PieCauses = () => {
   }, [lJson]);
 
   return (
-    <div class="card flex-fill">
-      <div class="card-body">
-        <h3 class="card-title">Causes</h3>
+    <div className="card flex-fill">
+      <div className="card-body">
+        <h3 className="card-title">Causes</h3>
         <Chart
           chartType="PieChart"
           data={listeTopCauses}
@@ -133,25 +136,100 @@ const PieCauses = () => {
 }
 
 const HistIncidentParHeure = () => {
-  const p = {}
+  const [lJson,setLJson] = useState([]);
+  const [listeIncParHeure,setIncParHeure] = useState([]);
+
+  // Lancé au 1er render
+  useEffect(() => {
+    async function fetchIncParHeure() {
+        const reponse = await fetch("http://192.168.8.141:2999/incidentparheure");
+        const jsonlist = await reponse.json();
+        setLJson(jsonlist);
+    }
+    fetchIncParHeure();
+  }, []); 
+
+  // Lancé chaque fois que lJson change
+  useEffect(() => {
+    // Transformer les données de json au format de google charts
+    // [{heure,nb},...] -> [[heure,nb]]
+    // Le premier élément doit être les noms des
+    // colonnes
+    let l = lJson.map(e => [e.heure+'h', e.nb]);
+    l = [["Heure","Nombre d'incidents"],...l];
+    // TODO *****************************
+    // heure '25' est 1h00 donc on la replace au début
+    /* let h25 = l.pop();
+    l = [["Heure","Nombre d'incidents"],['1h',h25.nb],...l]; */
+    setIncParHeure(l);
+  }, [lJson]);
+
   return (
-    <div class="card">
-      <div class="card-body">
-        <h3 class="card-title">Total par heure</h3>
+    <div className="card">
+      <div className="card-body">
+        <h3 className="card-title">Total par heure</h3>
         <Chart
           chartType="Bar"
           width="100%"
           height="400px"
-          data={p.l}
+          data={listeIncParHeure}
         />
       </div>
     </div>
   );
   };
 
-const Top10StationParMois = () => (
-  <div>Top10StationParMois</div>
-);
+
+const RechercheParDate= () => {
+
+  const [selectedDate, setSelectedDate] = useState(new Date('2019-01-01'));
+
+  return (
+    <>
+      <div className='row'>
+        <h2>Recherche par date</h2>
+        <DatePicker selected={selectedDate} onChange={(date) => setSelectedDate(date)} />
+      </div>
+      <div className='row'>
+        <div className='col-3'>
+          <NbIncJourTotal d={selectedDate} />
+        </div>
+        <div className='col-6'>
+          <NbIncJourParHeure d={selectedDate} />
+        </div>
+        <div className='col-3'>
+          <NbIncJourCauses d={selectedDate} />
+        </div>
+      </div>
+    </>
+  );
+};
+
+const NbIncJourTotal = ({d}) => {
+    let sDate = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+    useEffect(() => {
+    async function fetchNbIncParDate() {
+        const reponse = await fetch("http://192.168.8.141:2999/nbincidentpardate/" + sDate);
+        const jsonlist = await reponse.json();
+        //setLJson(jsonlist);
+    }
+    fetchNbIncParDate();
+  }); 
+
+  return (
+    <>
+    {d.toString()}
+    </>
+  );
+}
+
+const NbIncJourParHeure = ({d}) => {
+  
+}
+
+const NbIncJourCauses = ({d}) => {
+  
+}
 
 const IncidentsParMois = () => (
   <div>IncidentsParMois</div>

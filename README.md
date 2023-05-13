@@ -14,7 +14,6 @@ Le répertoire `frontend` est une application *React* qui se connecte sur l'API 
 
 Les données sont publiques et viennent d'[ici](https://www.donneesquebec.ca/recherche/dataset/vmtl-incidents-du-reseau-du-metro). Elles ont été transformées pour être utilisées dans *MariaBD*.
 
-# Dépendances
 
 ## backend
 + npm
@@ -24,3 +23,4 @@ Les données sont publiques et viennent d'[ici](https://www.donneesquebec.ca/rec
 + npm
     + bootstrap
     + react-google-charts
+    + react-datepicker

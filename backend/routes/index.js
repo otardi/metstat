@@ -78,4 +78,53 @@ order by nb desc;`;
   }
 });
 
+/* Composant HistIncidentParHeure */
+router.get('/incidentparheure', async function (req, res, next) {
+
+  const query = `select substring_index(heureDebut,':',1)  as heure, 
+  count(*) as nb from incident
+group by heure
+order by heure`;
+
+  try {
+      // Se connecter
+      const connection = await pool.getConnection();
+
+      // Lancer la requête
+      const [rows, fields] = await connection.execute(query);
+
+      // Se déconnecter
+      connection.release();
+
+      // Passer les résultats à l'objet de réponse
+      res.json(rows);
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Server error');
+  }
+});
+
+/* Composant HistIncidentParDate */
+router.get('/incidentpardate/:y-:m-:j', async function (req, res, next) {
+
+  const query = ``;
+
+  try {
+      // Se connecter
+      const connection = await pool.getConnection();
+
+      // Lancer la requête
+      const [rows, fields] = await connection.execute(query);
+
+      // Se déconnecter
+      connection.release();
+
+      // Passer les résultats à l'objet de réponse
+      res.json(rows);
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Server error');
+  }
+});
+
 module.exports = router;
