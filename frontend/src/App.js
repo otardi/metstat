@@ -180,9 +180,20 @@ const HistIncidentParHeure = () => {
   };
 
 
-const RechercheParDate= () => {
+const RechercheParDate = () => {
 
   const [selectedDate, setSelectedDate] = useState(new Date('2019-01-01'));
+  const [lJson, setLJson] = useState([]);
+
+  useEffect(() => {
+    async function fetchNbIncParDate() {
+      const sDate = `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}-${selectedDate.getDate() }`;
+      const reponse = await fetch("http://192.168.8.141:2999/incidentpardate/" + sDate);
+      const jsonlist = await reponse.json();
+      setLJson(jsonlist);
+    }
+    fetchNbIncParDate();
+  }, [selectedDate]); 
 
   return (
     <>
@@ -191,8 +202,8 @@ const RechercheParDate= () => {
         <DatePicker selected={selectedDate} onChange={(date) => setSelectedDate(date)} />
       </div>
       <div className='row'>
-        <div className='col-3'>
-          <NbIncJourTotal d={selectedDate} />
+        <div className='col-3 mt-2'>
+          <NbIncJourTotal d={lJson} />
         </div>
         <div className='col-6'>
           <NbIncJourParHeure d={selectedDate} />
@@ -206,20 +217,14 @@ const RechercheParDate= () => {
 };
 
 const NbIncJourTotal = ({d}) => {
-    let sDate = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
-    useEffect(() => {
-    async function fetchNbIncParDate() {
-        const reponse = await fetch("http://192.168.8.141:2999/nbincidentpardate/" + sDate);
-        const jsonlist = await reponse.json();
-        //setLJson(jsonlist);
-    }
-    fetchNbIncParDate();
-  }); 
 
   return (
-    <>
-    {d.toString()}
-    </>
+    <div className="card">
+      <div className="card-body">
+        <h3 className="card-title">Incidents</h3>
+        <h1>{d.length}</h1>
+      </div>
+    </div>
   );
 }
 

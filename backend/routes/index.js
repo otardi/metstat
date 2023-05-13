@@ -11,9 +11,7 @@ const pool = mysql.createPool({
     database: 'metro'
 });
 
-function connect() {
-  
-}
+
 
 /* Page principale */
 router.get('/', function(req, res, next) {
@@ -107,9 +105,12 @@ order by heure`;
 /* Composant HistIncidentParDate */
 router.get('/incidentpardate/:y-:m-:j', async function (req, res, next) {
 
-  const query = ``;
+  const query = `select *
+from incident
+where annee=${req.params.y} and mois=${req.params.m} and jour=${req.params.j}`;
 
   try {
+    
       // Se connecter
       const connection = await pool.getConnection();
 
